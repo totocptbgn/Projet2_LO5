@@ -56,25 +56,23 @@ let rec prefixes_aux l n s =
   if n = 0
   then "e" :: l
   else prefixes_aux (("e"  ^ (String.sub s 0 n)) :: l) (n-1) s
-;;
 
 let rec prefixes s =
   prefixes_aux [] (String.length s) s
-;;
 
 (* prefixes_of_list : string list -> string list
    renvoie la liste triée et sans doublons des préfixes des chaînes
    de caractères d'une liste donnée *)
 let prefixes_of_list l =
   (* prefixes puis sort_uniq avec compare de string *)
-  []
+    List.sort_uniq String.compare (List.flatten (List.map prefixes l))
 
 (* declare_types_alphabet : char list -> string
    - prend une liste de caractères [c_1; ...; c_n] et renvoie une chaîne
    de la forme "(A c_1... c_n)" *)
 let declare_types_alphabet cl =
   (* à compléter : ? *)
-  ""
+  "(A " ^ (String.concat " " (List.map (fun s -> String.make 1 s)  cl)) ^ ")"
 
 (* declare_types_trie : string list -> string
    - prend une liste l de chaînes de caractères et
