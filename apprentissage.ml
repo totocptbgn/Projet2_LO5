@@ -140,15 +140,17 @@ let eq_trans_constr s a =
    - pour une chaîne non vide de la forme sa on obtient
    une chaine correspondant à l'équation f(sa)= delta (fs) a
    - pour la chaîne vide on obtient la chaîne vide *)
-let rec list_transition_constraints l =
-  let rec list_transition_constraints_bis l accu =
+
+let rec list_transition_constraints_aux l accu =
   match l with
     | [] -> accu
-    | a::b ->
-    if a="e" then list_transition_constraints_bis b ("(assert (= 0 (f e)))"::accu)
-    else list_transition_constraints_bis b ((eq_trans_constr (String.sub a 0 ((String.length a)-1)) (String.get a (String.length a)))::accu)
-  in list_transition_constraints_bis (prefixes_of_list l) []
-  ;;
+    | a :: b ->
+      if a = "e"
+      then list_transition_constraints_aux b ("(assert (= 0 (f e)))" :: accu)
+      else list_transition_constraints_aux b ((eq_trans_constr (String.sub a 0 ((String.length a) - 1)) (String.get a ((String.length a) - 1))) :: accu)
+
+let list_transition_constraints l =
+  list_transition_constraints_aux (prefixes_of_list l) []
 
 (* assert_transition_constraints : string list -> string
    - prend en entrée une liste de mots et renvoie une chaîne qui modélise
@@ -162,8 +164,8 @@ let rec list_transition_constraints l =
                (= (f eb)  (delta (f e)  b))))"
  *)
 let assert_transition_constraints l =
-  (* à compléter *)
-  ""
+  let ltc = List.rev (list_transition_constraints l) in
+  List.hd (ltc) ^ "\n(assert (and\n\t" ^ (String.concat "\n\t" (List.rev (List.tl (ltc)))) ^ "))\n"
 
 (* test *)
 (* Printf.printf "%s" (assert_transition_constraints (li @ le)) *)
