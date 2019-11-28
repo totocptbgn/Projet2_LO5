@@ -85,11 +85,11 @@ let declare_types_trie l =
 (* declare_types : string list -> char list -> string *)
 let declare_types l cl =
   (* à compléter : ? *)
-  "(declare-datatypes () (" ^ declare_types_alphabet cl ^ " "
-  ^ declare_types_trie l ^ "))\n"
+  "; définition de l'alphabet A et de l'arbre préfixe T
+  \n(declare-datatypes () (" ^ declare_types_alphabet cl ^ " " ^ declare_types_trie l ^ "))\n";;
 
 (* test *)
-(* Printf.printf "%s" (declare_types (li @ le) a) *)
+Printf.printf "%s" (declare_types (li @ le) a)
 
 
 (* ======================================================================= *)
@@ -104,7 +104,21 @@ let declare_types l cl =
 
 let define_sorts_and_functions  =
   (* à compléter *)
-  ""
+  "; les états de l'automate à trouver sont {0, 1, ..., n-1}
+\n(define-sort Q () Int)
+\n(declare-const n Q)
+\n(assert (> n 0))
+\n; fonction de transition de l'automate
+\n(declare-fun delta (Q A) Q)
+\n(assert (forall ((q Q) (a A))
+\n(and (>= (delta q a) 0) (< (delta q a) n))))
+\n; ensemble d'états acceptants de l'automate
+\n(declare-fun final (Q) Bool)
+\n; fonction des éléments de l'arbre préfixe vers les états
+\n(declare-fun f (T) Q)
+\n(assert (forall ((x T))
+\n(and (>= (f x) 0) (< (f x) n))))
+\n"
 
 (* ======================================================================= *)
 (* EXERCICE 4 : contraintes sur les transitions
@@ -128,8 +142,14 @@ let eq_trans_constr s a =
    une chaine correspondant à l'équation f(sa)= delta (fs) a
    - pour la chaîne vide on obtient la chaîne vide *)
 let rec list_transition_constraints l =
-  (* à compléter *)
-  []
+  let rec list_transition_constraints_bis l accu =
+  match l with
+    | [] -> accu
+    | a::b ->
+    if a="e" then list_transition_constraints_bis b ("(assert (= 0 (f e)))"::accu)
+    else list_transition_constraints_bis b ((eq_trans_constr (String.sub a 0 ((String.length a)-1)) (String.get a (String.length a)))::accu)
+  in list_transition_constraints_bis (prefixes_of_list l) []
+  ;;
 
 (* assert_transition_constraints : string list -> string
    - prend en entrée une liste de mots et renvoie une chaîne qui modélise

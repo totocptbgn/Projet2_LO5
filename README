@@ -66,6 +66,7 @@ devrait  être
 (declare-fun f (T) Q)
 (assert (forall ((x T))
 (and (>= (f x) 0) (< (f x) n))))
+----------
 ; contrainte (50) sur l'état initial
 (assert (= 0 (f e)))
 (assert (and 
