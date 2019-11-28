@@ -86,10 +86,10 @@ let declare_types_trie l =
 let declare_types l cl =
   (* à compléter : ? *)
   "; définition de l'alphabet A et de l'arbre préfixe T
-  \n(declare-datatypes () (" ^ declare_types_alphabet cl ^ " " ^ declare_types_trie l ^ "))\n";;
+  (declare-datatypes () (" ^ declare_types_alphabet cl ^ " " ^ declare_types_trie l ^ "))\n"
 
 (* test *)
-Printf.printf "%s" (declare_types (li @ le) a)
+(* Printf.printf "%s" (declare_types (li @ le) a) *)
 
 
 (* ======================================================================= *)
@@ -103,22 +103,21 @@ Printf.printf "%s" (declare_types (li @ le) a)
    Ces définitions ne dépendent pas des listes de mots acceptés ou rejetés. *)
 
 let define_sorts_and_functions  =
-  (* à compléter *)
   "; les états de l'automate à trouver sont {0, 1, ..., n-1}
-\n(define-sort Q () Int)
-\n(declare-const n Q)
-\n(assert (> n 0))
-\n; fonction de transition de l'automate
-\n(declare-fun delta (Q A) Q)
-\n(assert (forall ((q Q) (a A))
-\n(and (>= (delta q a) 0) (< (delta q a) n))))
-\n; ensemble d'états acceptants de l'automate
-\n(declare-fun final (Q) Bool)
-\n; fonction des éléments de l'arbre préfixe vers les états
-\n(declare-fun f (T) Q)
-\n(assert (forall ((x T))
-\n(and (>= (f x) 0) (< (f x) n))))
-\n"
+(define-sort Q () Int)
+(declare-const n Q)
+(assert (> n 0))
+; fonction de transition de l'automate
+(declare-fun delta (Q A) Q)
+(assert (forall ((q Q) (a A))
+(and (>= (delta q a) 0) (< (delta q a) n))))
+; ensemble d'états acceptants de l'automate
+(declare-fun final (Q) Bool)
+; fonction des éléments de l'arbre préfixe vers les états
+(declare-fun f (T) Q)
+(assert (forall ((x T))
+(and (>= (f x) 0) (< (f x) n))))
+"
 
 (* ======================================================================= *)
 (* EXERCICE 4 : contraintes sur les transitions
@@ -181,7 +180,7 @@ let assert_transition_constraints l =
    qui modélise l'appartenance de s à l'ensemble final des états acceptants *)
 let eq_accept s =
   (* à compléter *)
-  ""
+  "(final (f e" ^ s ^ "))"
 
 (* eq_non_accept : string -> string
    - prend une chaîne de caractères s et renvoie une chaîne de caractères
@@ -189,16 +188,16 @@ let eq_accept s =
  *)
 let eq_non_accept s =
   (* à compléter *)
-  ""
+  "(not(final (f e" ^ s ^ ")))"
 
 (* assert_acceptance : string list -> string list > string
    prend deux listes de chaînes de caractères, li et le, et renvoie une
    chaine qui modélise les contraintes sur les états acceptants
    décrites par la formule (52).
    Les mots dans li sont acceptés et les mots dans le ne le sont pas. *)
+
 let assert_acceptance li le  =
-  (* à compléter *)
-  ""
+  "(assert (and\n\t" ^ (String.concat "\n\t" ((List.map eq_accept li) @ (List.map eq_non_accept le))) ^ "))\n"
 
 (* test *)
 (* Printf.printf "%s" (assert_acceptance li le) *)
@@ -216,8 +215,12 @@ let assert_acceptance li le  =
    Pour vérifier votre algorithme, vous pouvez essayer le code SMT-LIB
    que vous obtenez dans le solveur Z3: https://rise4fun.com/z3 *)
 let smt_code li le =
-  (* à compléter *)
-  ";; à compléter"
+  let ens = li @ le in
+  declare_types ens (alphabet_from_list ens)
+  ^ define_sorts_and_functions
+  ^ assert_transition_constraints ens
+  ^ assert_acceptance li le
+  ^ "(check-sat-using (then qe smt))\n(get-model)\n(exit)\n"
 
 (* test *)
 (* Printf.printf "%s" (smt_code li le) *)
