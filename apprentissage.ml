@@ -132,8 +132,7 @@ let define_sorts_and_functions  =
    Par exemple, pour s = "abc" et  c = 'd' on a
    eq_trans_constr outputs "(= (f abcd)  (delta (f abc)  d))" *)
 let eq_trans_constr s a =
-  (* à compléter *)
-  ""
+  "(= (f " ^ s ^ String.make 1 a ^ ")  (delta (f " ^ s ^ ")  " ^ String.make 1 a ^ "))"
 
 (* list_transition_constraints : string list -> string list
    prend une liste de chaînes de caractères et génère une liste
