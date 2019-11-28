@@ -51,9 +51,15 @@ let alphabet_from_list l =
    renvoie la liste des préfixes d'une chaîne de caractères 
    Nous allons ajouter à chaque préfixe le caractère 'e'.
    Par exemple, prefixes "aba" = ["e"; "ea"; "eab"; "eaba"] *)
+let rec prefixes_aux l n s =
+  if n = 0
+  then "e" :: l
+  else prefixes_aux (("e"  ^ (String.sub s 0 n)) :: l) (n-1) s
+;;
+
 let rec prefixes s =
-  (* à compléter *)
-  []
+  prefixes_aux [] (String.length s) s
+;;
   
 (* prefixes_of_list : string list -> string list
    renvoie la liste triée et sans doublons des préfixes des chaînes 
