@@ -80,12 +80,13 @@ let declare_types_alphabet cl =
    s_1... s_n est une énumération de tous les
    prefixes des chaînes apparaissant dans l *)
 let declare_types_trie l =
-    "(T "^ (String.concat " " (prefixes_of_list l)) ^")"
+    "(T " ^ (String.concat " " (prefixes_of_list l)) ^ ")"
 
 (* declare_types : string list -> char list -> string *)
 let declare_types l cl =
   (* à compléter : ? *)
-  ""
+  "(declare-datatypes () (" ^ declare_types_alphabet cl ^ " "
+  ^ declare_types_trie l ^ "))\n"
 
 (* test *)
 (* Printf.printf "%s" (declare_types (li @ le) a) *)
