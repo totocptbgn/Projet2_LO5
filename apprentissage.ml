@@ -80,8 +80,7 @@ let declare_types_alphabet cl =
    s_1... s_n est une énumération de tous les
    prefixes des chaînes apparaissant dans l *)
 let declare_types_trie l =
-  (* à compléter : ? *)
-  ""
+    "(T "^ (String.concat " " (prefixes_of_list l)) ^")"
 
 (* declare_types : string list -> char list -> string *)
 let declare_types l cl =
