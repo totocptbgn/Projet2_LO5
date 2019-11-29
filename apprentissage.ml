@@ -164,7 +164,7 @@ let list_transition_constraints l =
  *)
 let assert_transition_constraints l =
   let ltc = List.rev (list_transition_constraints l) in
-  List.hd (ltc) ^ "\n(assert (and\n\t" ^ (String.concat "\n\t" (List.rev (List.tl (ltc)))) ^ "))\n"
+  List.hd (ltc) ^ "\n(assert (and\n\t" ^ (String.concat "\n\t" (List.tl (ltc))) ^ "))\n"
 
 (* test *)
 (* Printf.printf "%s" (assert_transition_constraints (li @ le)) *)
