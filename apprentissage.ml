@@ -145,7 +145,7 @@ let rec list_transition_constraints_aux l accu =
     | [] -> accu
     | a :: b ->
       if a = "e"
-      then list_transition_constraints_aux b ("(assert (= 0 (f e)))" :: accu)
+      then list_transition_constraints_aux b ("" :: accu)
       else list_transition_constraints_aux b ((eq_trans_constr (String.sub a 0 ((String.length a) - 1)) (String.get a ((String.length a) - 1))) :: accu)
 
 let list_transition_constraints l =
@@ -164,7 +164,7 @@ let list_transition_constraints l =
  *)
 let assert_transition_constraints l =
   let ltc = List.rev (list_transition_constraints l) in
-  List.hd (ltc) ^ "\n(assert (and\n\t" ^ (String.concat "\n\t" (List.tl (ltc))) ^ "))\n"
+  "(assert (and\n\t" ^ (String.concat "\n\t" ltc) ^ "))\n"
 
 (* test *)
 (* Printf.printf "%s" (assert_transition_constraints (li @ le)) *)
@@ -218,6 +218,7 @@ let smt_code li le =
   let ens = li @ le in
   declare_types ens (alphabet_from_list ens)
   ^ define_sorts_and_functions
+  ^ "(assert (= 0 (f e)))\n"
   ^ assert_transition_constraints ens
   ^ assert_acceptance li le
   ^ "(check-sat-using (then qe smt))\n(get-model)\n(exit)\n"
